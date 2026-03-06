@@ -1,5 +1,5 @@
 name: filatelia
-description: "A new Flutter project."
+description: Álbum de sellos españoles en pesetas
 publish_to: 'none'
 version: 0.1.0
 
@@ -9,6 +9,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  provider: ^6.1.1
+  shared_preferences: ^2.2.2
+  google_fonts: ^8.0.2
+  path_provider: ^2.1.1
+  intl: ^0.20.2
+  flutter_animate: ^4.3.0
 
 dev_dependencies:
   flutter_test:
