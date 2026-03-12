@@ -1,3 +1,5 @@
+// Ok. Perfecto ahora. Lista los elementos pendientes de implementar en formato tabla. Gracias
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
