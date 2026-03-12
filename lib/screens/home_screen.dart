@@ -3,14 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../widgets/luxury_book.dart';
 import '../widgets/era_navigation.dart';
+import 'era_screen.dart';
 
 /// Pantalla principal del álbum de sellos.
-///
+/// 
 /// Esta pantalla integra:
 /// - Panel lateral de navegación por épocas (EraNavigation)
 /// - Libro de lujo como contenedor principal (LuxuryBook)
-/// - Contenido dinámico según la época seleccionada
-///
+/// - Contenido dinámico según la época seleccionada (EraScreen)
+/// 
 /// Diseñada para ser responsive en Windows (escritorio) y dispositivos móviles.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,8 +31,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF1A0F0A),
-
-      body: isMobile ? _buildMobileLayout() : _buildDesktopLayout(),
+      
+      body: isMobile
+          ? _buildMobileLayout()
+          : _buildDesktopLayout(),
     );
   }
 
@@ -49,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           },
         ),
-
+        
         // Área principal con el libro de lujo
         Expanded(
           child: Padding(
@@ -60,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
               maxWidth: 1400,
               child: _selectedEraId == null
                   ? _buildWelcomePage()
-                  : _buildEraContent(_selectedEraId!),
+                  : EraScreen(eraId: _selectedEraId!),
             ),
           ),
         ),
@@ -93,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-
+        
         // Contenido principal
         Expanded(
           child: Padding(
@@ -103,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
               subtitle: 'Colección en Pesetas',
               child: _selectedEraId == null
                   ? _buildWelcomePage()
-                  : _buildEraContent(_selectedEraId!),
+                  : EraScreen(eraId: _selectedEraId!),
             ),
           ),
         ),
@@ -146,7 +149,10 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               color: const Color(0xFFD4AF37).withOpacity(0.2),
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFD4AF37), width: 3),
+              border: Border.all(
+                color: const Color(0xFFD4AF37),
+                width: 3,
+              ),
             ),
             child: const Icon(
               Icons.auto_stories,
@@ -154,9 +160,9 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Color(0xFFD4AF37),
             ),
           ),
-
+          
           const SizedBox(height: 30),
-
+          
           // Título de bienvenida
           Text(
             'Bienvenido a tu Álbum de Sellos',
@@ -167,9 +173,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-
+          
           const SizedBox(height: 15),
-
+          
           // Subtítulo descriptivo
           Text(
             'Selecciona una época del menú lateral\npara comenzar tu colección',
@@ -180,42 +186,51 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 1.5,
             ),
           ),
-
+          
           const SizedBox(height: 40),
-
+          
           // Instrucciones
           _buildInstructionStep(
             Icons.touch_app,
             '1. Selecciona una época',
             'Explora las 6 épocas históricas',
           ),
-
+          
           _buildInstructionStep(
             Icons.shopping_bag,
             '2. Abre sobres sorpresa',
             'Consigue sellos aleatorios',
           ),
-
+          
           _buildInstructionStep(
             Icons.bookmark,
             '3. Completa tu álbum',
             'Colecciona todos los sellos',
           ),
-
+          
           const SizedBox(height: 30),
-
+          
           // Botón de acción
           ElevatedButton.icon(
             icon: const Icon(Icons.explore),
             label: const Text(
               'Comenzar Colección',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFD4AF37),
               foregroundColor: const Color(0xFF2C1810),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             ),
-            onPressed: () {},
+            onPressed: () {
+              // Seleccionar primera época por defecto
+              setState(() {
+                _selectedEraId = 'isabel_ii';
+              });
+            },
           ),
         ],
       ),
@@ -223,11 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// Widget para cada paso de instrucción
-  Widget _buildInstructionStep(
-    IconData icon,
-    String title,
-    String description,
-  ) {
+  Widget _buildInstructionStep(IconData icon, String title, String description) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -254,46 +265,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Contenido de una época específica
-  Widget _buildEraContent(String eraId) {
-    // 🔜 Aquí integraremos EraScreen cuando lo implementemos
-    // Por ahora, mostramos un placeholder informativo
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.history_edu, size: 80, color: Colors.brown[400]),
-          const SizedBox(height: 20),
-          Text(
-            'Contenido de la época',
-            style: GoogleFonts.cinzel(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF2C1810),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'ID: $eraId',
-            style: GoogleFonts.cormorantGaramond(
-              fontSize: 16,
-              color: Colors.brown[700],
-            ),
-          ),
-          const SizedBox(height: 30),
-          Text(
-            'Próximamente: EraScreen\ncon series y sellos de esta época',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.cormorantGaramond(
-              fontSize: 14,
-              color: Colors.brown[600],
-            ),
           ),
         ],
       ),
