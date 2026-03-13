@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Widget principal que simula un libro de lujo para el álbum de sellos.
 class LuxuryBook extends StatelessWidget {
   final Widget child;
   final String title;
@@ -23,7 +22,9 @@ class LuxuryBook extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: maxWidth != null ? BoxConstraints(maxWidth: maxWidth!) : null,
+      constraints: maxWidth != null
+          ? BoxConstraints(maxWidth: maxWidth!)
+          : null,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -59,87 +60,90 @@ class LuxuryBook extends StatelessWidget {
     );
   }
 
-  /// Construye el lomo del libro con título dorado
   Widget _buildBookSpine(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: MediaQuery.of(context).size.width > 600 ? 100 : 70,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            goldColor,
-            goldColor.withValues(alpha: 0.8),
-            goldColor.withValues(alpha: 0.6),
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(16),
+        topRight: Radius.circular(16),
+      ),
+      child: Container(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.width > 600 ? 100 : 70,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              goldColor,
+              goldColor.withValues(alpha: 0.8),
+              goldColor.withValues(alpha: 0.6),
+            ],
+          ),
+          border: Border(
+            top: BorderSide(color: goldColor.withValues(alpha: 0.5), width: 2),
+            left: BorderSide(
+              color: Colors.black.withValues(alpha: 0.3),
+              width: 1,
+            ),
+            right: BorderSide(
+              color: Colors.black.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
           ],
         ),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
-        ),
-        border: Border(
-          top: BorderSide(color: goldColor.withValues(alpha: 0.5), width: 2),
-          left: BorderSide(color: Colors.black.withValues(alpha: 0.3), width: 1),
-          right: BorderSide(color: Colors.black.withValues(alpha: 0.3), width: 1),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              title,
-              style: GoogleFonts.cinzel(
-                fontSize: MediaQuery.of(context).size.width > 600 ? 32 : 24,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF4A3420),
-                letterSpacing: 2,
-                shadows: [
-                  Shadow(
-                    color: Colors.white.withValues(alpha: 0.5),
-                    offset: const Offset(1, 1),
-                    blurRadius: 2,
-                  ),
-                ],
-              ),
-            ),
-            if (subtitle != null) ...[
-              const SizedBox(height: 4),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
               Text(
-                subtitle!,
-                style: GoogleFonts.cormorantGaramond(
-                  fontSize: MediaQuery.of(context).size.width > 600 ? 16 : 12,
-                  fontStyle: FontStyle.italic,
+                title,
+                style: GoogleFonts.cinzel(
+                  fontSize: MediaQuery.of(context).size.width > 600 ? 32 : 24,
+                  fontWeight: FontWeight.bold,
                   color: const Color(0xFF4A3420),
-                  letterSpacing: 1,
+                  letterSpacing: 2,
+                  shadows: [
+                    Shadow(
+                      color: Colors.white.withValues(alpha: 0.5),
+                      offset: const Offset(1, 1),
+                      blurRadius: 2,
+                    ),
+                  ],
                 ),
               ),
+              if (subtitle != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  subtitle!,
+                  style: GoogleFonts.cormorantGaramond(
+                    fontSize: MediaQuery.of(context).size.width > 600 ? 16 : 12,
+                    fontStyle: FontStyle.italic,
+                    color: const Color(0xFF4A3420),
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
   }
 
-  /// Construye las páginas del libro con efecto de papel antiguo
   Widget _buildBookPages(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: const Color(0xFFFAF0E6),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: const Color(0xFFD4AF37),
-          width: 2,
-        ),
+        border: Border.all(color: const Color(0xFFD4AF37), width: 2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),

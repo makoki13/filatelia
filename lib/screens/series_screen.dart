@@ -6,21 +6,18 @@ import '../providers/album_provider.dart';
 import '../models/series.dart';
 import '../widgets/stamp_card.dart';
 
-/// Pantalla de detalle de una serie de sellos.
 class SeriesScreen extends StatelessWidget {
   final Series series;
 
-  const SeriesScreen({
-    super.key,
-    required this.series,
-  });
+  const SeriesScreen({super.key, required this.series});
 
   @override
   Widget build(BuildContext context) {
+    print('🎴 SERIES SCREEN BUILD - serie: ${series.name}');
+    
     return Consumer<AlbumProvider>(
       builder: (context, albumProvider, child) {
         final totalStamps = series.stamps.length;
-        final collectedStamps = series.countCollectedStamps(albumProvider.collectedStampIds);
         final progress = series.getProgressPercentage(albumProvider.collectedStampIds);
         final isComplete = progress == 100 && totalStamps > 0;
 
@@ -29,7 +26,6 @@ class SeriesScreen extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: const Color(0xFF1A0F0A),
-          
           appBar: AppBar(
             title: Text(
               series.name,
@@ -68,7 +64,6 @@ class SeriesScreen extends StatelessWidget {
                 ),
             ],
           ),
-          
           body: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -83,7 +78,7 @@ class SeriesScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                _buildSeriesInfo(series, progress, collectedStamps, totalStamps, isComplete),
+                _buildSeriesInfo(series, progress, totalStamps, isComplete),
                 _buildDivider(),
                 Expanded(
                   child: _buildStampsGrid(series, albumProvider, crossAxisCount),
@@ -91,7 +86,6 @@ class SeriesScreen extends StatelessWidget {
               ],
             ),
           ),
-          
           floatingActionButton: isComplete
               ? FloatingActionButton.extended(
                   onPressed: () => _showCompletionDialog(context),
@@ -109,7 +103,6 @@ class SeriesScreen extends StatelessWidget {
   Widget _buildSeriesInfo(
     Series series,
     int progress,
-    int collectedStamps,
     int totalStamps,
     bool isComplete,
   ) {
@@ -162,7 +155,7 @@ class SeriesScreen extends StatelessWidget {
                       '${series.startYear} - ${series.endYear}',
                       style: GoogleFonts.cormorantGaramond(
                         fontSize: 14,
-                        color: Colors.brown[700],
+                        color: const Color(0xFF6B4423),
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -171,28 +164,25 @@ class SeriesScreen extends StatelessWidget {
               ),
             ],
           ),
-          
-          const SizedBox(height: 16),
-          
-          if (series.description.isNotEmpty)
+          if (series.description.isNotEmpty) ...[
+            const SizedBox(height: 16),
             Text(
               series.description,
               style: GoogleFonts.cormorantGaramond(
                 fontSize: 14,
-                color: Colors.brown[800],
+                color: const Color(0xFF5A3921),
                 height: 1.5,
               ),
             ),
-          
+          ],
           const SizedBox(height: 16),
-          
-          _buildProgressBar(progress, collectedStamps, totalStamps),
+          _buildProgressBar(progress, totalStamps),
         ],
       ),
     );
   }
 
-  Widget _buildProgressBar(int progress, int collectedStamps, int totalStamps) {
+  Widget _buildProgressBar(int progress, int totalStamps) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -200,7 +190,7 @@ class SeriesScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(6),
           child: LinearProgressIndicator(
             value: totalStamps > 0 ? progress / 100 : 0,
-            backgroundColor: Colors.grey[300],
+            backgroundColor: const Color(0xFFE0E0E0),
             valueColor: AlwaysStoppedAnimation<Color>(
               _getProgressColor(progress),
             ),
@@ -212,10 +202,10 @@ class SeriesScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              '$collectedStamps de $totalStamps sellos coleccionados',
+              '$progress% completado',
               style: GoogleFonts.cormorantGaramond(
                 fontSize: 13,
-                color: Colors.brown[700],
+                color: const Color(0xFF5A3921),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -275,9 +265,7 @@ class SeriesScreen extends StatelessWidget {
       itemCount: series.stamps.length,
       itemBuilder: (context, index) {
         final stamp = series.stamps[index];
-        return StampCard(
-          stamp: stamp,
-        );
+        return StampCard(stamp: stamp);
       },
     );
   }
@@ -292,7 +280,7 @@ class SeriesScreen extends StatelessWidget {
             Icon(
               Icons.local_post_office,
               size: 80,
-              color: Colors.grey[400],
+              color: const Color(0xFFAAAAAA),
             ),
             const SizedBox(height: 20),
             Text(
@@ -300,7 +288,7 @@ class SeriesScreen extends StatelessWidget {
               style: GoogleFonts.cinzel(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
+                color: const Color(0xFF666666),
               ),
             ),
             const SizedBox(height: 10),
@@ -309,7 +297,7 @@ class SeriesScreen extends StatelessWidget {
               textAlign: TextAlign.center,
               style: GoogleFonts.cormorantGaramond(
                 fontSize: 14,
-                color: Colors.grey[500],
+                color: const Color(0xFF888888),
               ),
             ),
           ],
@@ -358,7 +346,7 @@ class SeriesScreen extends StatelessWidget {
               textAlign: TextAlign.center,
               style: GoogleFonts.cormorantGaramond(
                 fontSize: 14,
-                color: Colors.brown[700],
+                color: const Color(0xFF5A3921),
               ),
             ),
           ],

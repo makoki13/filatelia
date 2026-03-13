@@ -5,7 +5,6 @@ import '../widgets/luxury_book.dart';
 import '../widgets/era_navigation.dart';
 import 'era_screen.dart';
 
-/// Pantalla principal del álbum de sellos.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -14,40 +13,36 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // ID de la época actualmente seleccionada
   String? _selectedEraId;
 
   @override
   Widget build(BuildContext context) {
-    // Detectar si es dispositivo móvil o escritorio
+    print('🏠 HOME SCREEN BUILD - _selectedEraId: $_selectedEraId');
     final isMobile = MediaQuery.of(context).size.width < 800;
 
     return Scaffold(
       backgroundColor: const Color(0xFF1A0F0A),
-
       body: isMobile ? _buildMobileLayout() : _buildDesktopLayout(),
     );
   }
 
-  /// Layout para escritorio: panel lateral + libro principal
   Widget _buildDesktopLayout() {
+    print('🖥️ _buildDesktopLayout() - Era: $_selectedEraId');
+
     return Row(
       children: [
         EraNavigation(
           width: 300,
           selectedEraId: _selectedEraId,
           onEraSelected: (eraId) {
-            setState(() {
-              _selectedEraId = eraId;
-            });
+            print('🔘 Era seleccionada: $eraId');
+            setState(() => _selectedEraId = eraId);
           },
           onHeaderTap: () {
-            setState(() {
-              _selectedEraId = null;
-            });
+            print('🏠 Header tap - Volviendo al inicio');
+            setState(() => _selectedEraId = null);
           },
         ),
-
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
@@ -55,9 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: 'Álbum de Sellos Españoles',
               subtitle: 'Colección en Pesetas',
               maxWidth: 1400,
-              child: _selectedEraId == null
-                  ? _buildWelcomePage()
-                  : EraScreen(eraId: _selectedEraId!),
+              child: _buildBookContent(),
             ),
           ),
         ),
@@ -65,8 +58,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Layout para móvil: AppBar + contenido
   Widget _buildMobileLayout() {
+    print('📱 _buildMobileLayout() - Era: $_selectedEraId');
+
     return Column(
       children: [
         AppBar(
@@ -83,9 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
           leading: IconButton(
             icon: const Icon(Icons.home, color: Color(0xFFD4AF37)),
             onPressed: () {
-              setState(() {
-                _selectedEraId = null;
-              });
+              print('🏠 Botón home móvil');
+              setState(() => _selectedEraId = null);
             },
             tooltip: 'Volver al inicio',
           ),
@@ -97,16 +90,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: LuxuryBook(
               title: 'Álbum de Sellos Españoles',
               subtitle: 'Colección en Pesetas',
-              child: _selectedEraId == null
-                  ? _buildWelcomePage()
-                  : EraScreen(eraId: _selectedEraId!),
+              child: _buildBookContent(),
             ),
           ),
         ),
@@ -114,8 +104,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Muestra un dialog para seleccionar época (móvil)
+  Widget _buildBookContent() {
+    print('📚 _buildBookContent() - _selectedEraId: $_selectedEraId');
+
+    if (_selectedEraId == null) {
+      print('📚 Mostrando página de bienvenida');
+      return _buildWelcomePage();
+    } else {
+      print('📚 Mostrando EraScreen para: $_selectedEraId');
+      return EraScreen(eraId: _selectedEraId!);
+    }
+  }
+
   void _showEraSelector() {
+    print('📋 _showEraSelector()');
+
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF2C1810),
@@ -127,15 +130,12 @@ class _HomeScreenState extends State<HomeScreen> {
           width: double.infinity,
           selectedEraId: _selectedEraId,
           onEraSelected: (eraId) {
-            setState(() {
-              _selectedEraId = eraId;
-            });
+            print('🔘 Era desde bottom sheet: $eraId');
+            setState(() => _selectedEraId = eraId);
             Navigator.pop(context);
           },
           onHeaderTap: () {
-            setState(() {
-              _selectedEraId = null;
-            });
+            setState(() => _selectedEraId = null);
             Navigator.pop(context);
           },
         );
@@ -143,8 +143,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Página de bienvenida cuando no hay época seleccionada
   Widget _buildWelcomePage() {
+    print('👋 _buildWelcomePage() renderizado');
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -152,7 +153,6 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
-              // ✅ CORREGIDO: withValues en lugar de withOpacity
               color: const Color(0xFFD4AF37).withValues(alpha: 0.2),
               shape: BoxShape.circle,
               border: Border.all(color: const Color(0xFFD4AF37), width: 3),
@@ -163,9 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Color(0xFFD4AF37),
             ),
           ),
-
           const SizedBox(height: 30),
-
           Text(
             'Bienvenido a tu Álbum de Sellos',
             style: GoogleFonts.cinzel(
@@ -175,41 +173,33 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-
           const SizedBox(height: 15),
-
           Text(
             'Selecciona una época del menú lateral\npara comenzar tu colección',
             textAlign: TextAlign.center,
             style: GoogleFonts.cormorantGaramond(
               fontSize: 18,
-              color: Colors.brown[700],
+              color: Color(0xFF6B4423),
               height: 1.5,
             ),
           ),
-
           const SizedBox(height: 40),
-
           _buildInstructionStep(
             Icons.touch_app,
             '1. Selecciona una época',
             'Explora las 6 épocas históricas',
           ),
-
           _buildInstructionStep(
             Icons.shopping_bag,
             '2. Abre sobres sorpresa',
             'Consigue sellos aleatorios',
           ),
-
           _buildInstructionStep(
             Icons.bookmark,
             '3. Completa tu álbum',
             'Colecciona todos los sellos',
           ),
-
           const SizedBox(height: 30),
-
           ElevatedButton.icon(
             icon: const Icon(Icons.explore),
             label: const Text(
@@ -222,9 +212,8 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             ),
             onPressed: () {
-              setState(() {
-                _selectedEraId = 'isabel_ii';
-              });
+              print('🔘 Botón "Abrir Sobre" pulsado');
+              setState(() => _selectedEraId = 'isabel_ii');
             },
           ),
         ],
@@ -232,7 +221,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Widget para cada paso de instrucción
   Widget _buildInstructionStep(
     IconData icon,
     String title,
@@ -243,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: Colors.brown[700], size: 24),
+          Icon(icon, color: const Color(0xFF6B4423), size: 24),
           const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,14 +241,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: GoogleFonts.cormorantGaramond(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.brown[800],
+                  color: const Color(0xFF5A3921),
                 ),
               ),
               Text(
                 description,
                 style: GoogleFonts.cormorantGaramond(
                   fontSize: 14,
-                  color: Colors.brown[600],
+                  color: const Color(0xFF7B5A3A),
                 ),
               ),
             ],
