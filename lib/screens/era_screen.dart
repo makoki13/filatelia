@@ -8,6 +8,7 @@ import '../models/era.dart';
 import '../models/series.dart';
 import 'series_screen.dart';
 
+/// Pantalla de detalle de una época histórica.
 class EraScreen extends StatelessWidget {
   final String eraId;
 
@@ -15,21 +16,15 @@ class EraScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('📅 ERA SCREEN BUILD - eraId: $eraId');
-    
     final Era era;
     try {
       era = StampDatabase.getEraById(eraId);
-      print('✅ Era encontrada: ${era.title}');
-      print('📊 Series en esta era: ${era.series.length}');
     } catch (e) {
-      print('❌ Error obteniendo era: $e');
       return _buildErrorState('Época no encontrada: $eraId');
     }
 
     return Consumer<AlbumProvider>(
       builder: (context, albumProvider, child) {
-        print('🔄 Consumer builder ejecutado');
         final progress = albumProvider.getProgressPercentage(eraId);
 
         return SingleChildScrollView(
@@ -37,6 +32,7 @@ class EraScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Título de la era
               Text(
                 era.title,
                 style: GoogleFonts.cinzel(
@@ -54,6 +50,8 @@ class EraScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
+
+              // Lista de series
               if (era.series.isEmpty)
                 _buildEmptySeriesState()
               else
@@ -70,50 +68,39 @@ class EraScreen extends StatelessWidget {
     List<Series> seriesList,
     AlbumProvider provider,
   ) {
-    print('📋 _buildSeriesList - Total series: ${seriesList.length}');
-    
     return Column(
       children: seriesList.map((series) {
-        print('🔍 Renderizando serie: ${series.name}');
         return _buildSeriesCard(context, series, provider);
       }).toList(),
     );
   }
 
+  /// Construye una tarjeta individual de serie
   Widget _buildSeriesCard(
     BuildContext context,
     Series series,
     AlbumProvider provider,
   ) {
-    print('🃏 _buildSeriesCard - Serie: ${series.name}');
-    
     final progress = series.getProgressPercentage(provider.collectedStampIds);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        print('✅✅✅ CLICK DETECTADO en serie: ${series.name}');
-        print('🔍 Navegando a SeriesScreen...');
-        
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => SeriesScreen(series: series),
-          ),
+          MaterialPageRoute(builder: (context) => SeriesScreen(series: series)),
         );
       },
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: Container(
+          width: double.infinity,
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: const Color(0xFFFAF0E6),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: const Color(0xFFD4AF37),
-              width: 2,
-            ),
+            border: Border.all(color: const Color(0xFFD4AF37), width: 2),
           ),
           child: Row(
             children: [
@@ -181,18 +168,11 @@ class EraScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFE8E8E8),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFFB0B0B0),
-          width: 2,
-        ),
+        border: Border.all(color: const Color(0xFFB0B0B0), width: 2),
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.folder_off,
-            size: 60,
-            color: const Color(0xFF888888),
-          ),
+          Icon(Icons.folder_off, size: 60, color: const Color(0xFF888888)),
           const SizedBox(height: 16),
           Text(
             'Próximamente',
@@ -222,11 +202,7 @@ class EraScreen extends StatelessWidget {
         padding: const EdgeInsets.all(40),
         child: Column(
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 60,
-              color: const Color(0xFFD32F2F),
-            ),
+            Icon(Icons.error_outline, size: 60, color: const Color(0xFFD32F2F)),
             const SizedBox(height: 16),
             Text(
               'Error',

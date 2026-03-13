@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// Widget principal que simula un libro de lujo para el álbum de sellos.
+///
+/// ✅ CORREGIDO: Estructura simplificada para no bloquear gestos
 class LuxuryBook extends StatelessWidget {
   final Widget child;
   final String title;
@@ -21,83 +24,71 @@ class LuxuryBook extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 🔍 DEBUG: Verificar que LuxuryBook se construye
+    print('📚 LUXURY BOOK BUILD() EJECUTADO');
+
     return Container(
       constraints: maxWidth != null
           ? BoxConstraints(maxWidth: maxWidth!)
           : null,
+      // 🔍 DEBUG: Listener para detectar clicks en cualquier parte del libro
+      child: Listener(
+        behavior: HitTestBehavior.opaque,
+        onPointerDown: (event) {
+          print('🖱️ LuxuryBook: PointerDown en ${event.localPosition}');
+        },
+        onPointerUp: (event) {
+          print('🖱️ LuxuryBook: PointerUp');
+        },
+        child: _buildBookContent(context),
+      ),
+    );
+  }
+
+  /// Construye el contenido completo del libro
+  Widget _buildBookContent(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Material(
+        // ✅ Color explícito para detectar gestos
+        color: coverColor,
+        elevation: 8,
+        shadowColor: Colors.black.withValues(alpha: 0.5),
+        child: Column(
+          children: [
+            _buildBookSpine(context),
+            Expanded(child: _buildBookPages(context)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Construye el lomo del libro con título dorado
+  Widget _buildBookSpine(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: MediaQuery.of(context).size.width > 600 ? 100 : 70,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            coverColor,
-            coverColor.withValues(alpha: 0.8),
-            coverColor.withValues(alpha: 0.6),
+            goldColor,
+            goldColor.withValues(alpha: 0.8),
+            goldColor.withValues(alpha: 0.6),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
-            blurRadius: 30,
-            spreadRadius: 5,
-            offset: const Offset(0, 10),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 10,
-            spreadRadius: -5,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          _buildBookSpine(context),
-          Expanded(child: _buildBookPages(context)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBookSpine(BuildContext context) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(16),
-        topRight: Radius.circular(16),
-      ),
-      child: Container(
-        width: double.infinity,
-        height: MediaQuery.of(context).size.width > 600 ? 100 : 70,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              goldColor,
-              goldColor.withValues(alpha: 0.8),
-              goldColor.withValues(alpha: 0.6),
-            ],
-          ),
-          border: Border(
-            top: BorderSide(color: goldColor.withValues(alpha: 0.5), width: 2),
-            left: BorderSide(
-              color: Colors.black.withValues(alpha: 0.3),
-              width: 1,
-            ),
-            right: BorderSide(
-              color: Colors.black.withValues(alpha: 0.3),
-              width: 1,
-            ),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
+        border: Border(
+          bottom: BorderSide(color: const Color(0xFF8B6914), width: 2),
         ),
+      ),
+      // 🔍 DEBUG: Listener en el spine también
+      child: Listener(
+        behavior: HitTestBehavior.opaque,
+        onPointerDown: (event) {
+          print('🖱️ BookSpine: PointerDown');
+        },
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -109,13 +100,6 @@ class LuxuryBook extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF4A3420),
                   letterSpacing: 2,
-                  shadows: [
-                    Shadow(
-                      color: Colors.white.withValues(alpha: 0.5),
-                      offset: const Offset(1, 1),
-                      blurRadius: 2,
-                    ),
-                  ],
                 ),
               ),
               if (subtitle != null) ...[
@@ -126,7 +110,6 @@ class LuxuryBook extends StatelessWidget {
                     fontSize: MediaQuery.of(context).size.width > 600 ? 16 : 12,
                     fontStyle: FontStyle.italic,
                     color: const Color(0xFF4A3420),
-                    letterSpacing: 1,
                   ),
                 ),
               ],
@@ -137,37 +120,49 @@ class LuxuryBook extends StatelessWidget {
     );
   }
 
+  /// Construye las páginas del libro con efecto de papel antiguo
   Widget _buildBookPages(BuildContext context) {
+    // 🔍 DEBUG: Verificar que se construyen las páginas
+    print('📄 _buildBookPages() EJECUTADO');
+
     return Container(
-      margin: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFAF0E6),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFD4AF37), width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-            spreadRadius: -2,
-          ),
-        ],
-      ),
+      // ✅ Color de fondo EXPLÍCITO (crítico para gestos)
+      color: const Color(0xFFFAF0E6),
+      // ✅ Padding para que el contenido no toque los bordes
+      padding: const EdgeInsets.all(12),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(8),
         child: Stack(
           children: [
-            child,
+            // 🔍 DEBUG: Listener en el área de contenido principal
             Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    center: Alignment.topLeft,
-                    radius: 1.5,
-                    colors: [
-                      Colors.white.withValues(alpha: 0.1),
-                      Colors.transparent,
-                    ],
+              child: Listener(
+                behavior: HitTestBehavior.opaque,
+                onPointerDown: (event) {
+                  print('🖱️ BookPages: PointerDown en contenido');
+                },
+                child:
+                    Container(), // Container invisible solo para detectar gestos
+              ),
+            ),
+
+            // Contenido principal (ERA SCREEN, WELCOME PAGE, etc.)
+            child,
+
+            // Overlay decorativo sutil (sin bloquear gestos)
+            Positioned.fill(
+              child: IgnorePointer(
+                // ✅ IgnorePointer para que no bloquee clicks
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      center: Alignment.topLeft,
+                      radius: 1.5,
+                      colors: [
+                        Colors.white.withValues(alpha: 0.1),
+                        Colors.transparent,
+                      ],
+                    ),
                   ),
                 ),
               ),
