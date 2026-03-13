@@ -7,44 +7,29 @@ import '../models/series.dart';
 import '../widgets/stamp_card.dart';
 
 /// Pantalla de detalle de una serie de sellos.
-///
-/// Muestra:
-/// - Información de la serie (nombre, período, descripción)
-/// - Progreso de colección de esta serie
-/// - Grid de todos los sellos de la serie
-/// - Cada sello muestra si está coleccionado o pendiente
-///
-/// Diseñada para ser responsive en Windows (escritorio) y dispositivos móviles.
 class SeriesScreen extends StatelessWidget {
-  /// Serie a mostrar
   final Series series;
 
-  const SeriesScreen({super.key, required this.series});
+  const SeriesScreen({
+    super.key,
+    required this.series,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AlbumProvider>(
       builder: (context, albumProvider, child) {
-        // Calcular progreso de esta serie
         final totalStamps = series.stamps.length;
-        final collectedStamps = series.countCollectedStamps(
-          albumProvider.collectedStampIds,
-        );
-        final progress = series.getProgressPercentage(
-          albumProvider.collectedStampIds,
-        );
+        final collectedStamps = series.countCollectedStamps(albumProvider.collectedStampIds);
+        final progress = series.getProgressPercentage(albumProvider.collectedStampIds);
         final isComplete = progress == 100 && totalStamps > 0;
 
-        // Detectar si es dispositivo móvil o escritorio
         final isMobile = MediaQuery.of(context).size.width < 800;
         final crossAxisCount = isMobile ? 3 : 5;
 
         return Scaffold(
           backgroundColor: const Color(0xFF1A0F0A),
-
-          // ═══════════════════════════════════════════════════════════════
-          // APP BAR PERSONALIZADA
-          // ═══════════════════════════════════════════════════════════════
+          
           appBar: AppBar(
             title: Text(
               series.name,
@@ -58,16 +43,12 @@ class SeriesScreen extends StatelessWidget {
             foregroundColor: const Color(0xFFD4AF37),
             elevation: 2,
             actions: [
-              // Indicador de progreso en AppBar
               if (totalStamps > 0)
                 Padding(
                   padding: const EdgeInsets.only(right: 16.0),
                   child: Center(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: isComplete
                             ? const Color(0xFF4CAF50)
@@ -87,10 +68,7 @@ class SeriesScreen extends StatelessWidget {
                 ),
             ],
           ),
-
-          // ═══════════════════════════════════════════════════════════════
-          // CUERPO DE LA PANTALLA
-          // ═══════════════════════════════════════════════════════════════
+          
           body: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -105,33 +83,15 @@ class SeriesScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                // Información de la serie
-                _buildSeriesInfo(
-                  series,
-                  progress,
-                  collectedStamps,
-                  totalStamps,
-                  isComplete,
-                ),
-
-                // Separador
+                _buildSeriesInfo(series, progress, collectedStamps, totalStamps, isComplete),
                 _buildDivider(),
-
-                // Grid de sellos
                 Expanded(
-                  child: _buildStampsGrid(
-                    series,
-                    albumProvider,
-                    crossAxisCount,
-                  ),
+                  child: _buildStampsGrid(series, albumProvider, crossAxisCount),
                 ),
               ],
             ),
           ),
-
-          // ═══════════════════════════════════════════════════════════════
-          // FLOATING ACTION BUTTON (si está completa)
-          // ═══════════════════════════════════════════════════════════════
+          
           floatingActionButton: isComplete
               ? FloatingActionButton.extended(
                   onPressed: () => _showCompletionDialog(context),
@@ -146,7 +106,6 @@ class SeriesScreen extends StatelessWidget {
     );
   }
 
-  /// Construye la información de la serie
   Widget _buildSeriesInfo(
     Series series,
     int progress,
@@ -158,10 +117,10 @@ class SeriesScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFFD4AF37).withOpacity(0.15),
+        color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
         border: Border(
           bottom: BorderSide(
-            color: const Color(0xFFD4AF37).withOpacity(0.5),
+            color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
             width: 2,
           ),
         ),
@@ -169,10 +128,8 @@ class SeriesScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Título y período
           Row(
             children: [
-              // Icono de estado
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
@@ -187,10 +144,7 @@ class SeriesScreen extends StatelessWidget {
                   size: 24,
                 ),
               ),
-
               const SizedBox(width: 16),
-
-              // Información principal
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,10 +171,9 @@ class SeriesScreen extends StatelessWidget {
               ),
             ],
           ),
-
+          
           const SizedBox(height: 16),
-
-          // Descripción
+          
           if (series.description.isNotEmpty)
             Text(
               series.description,
@@ -230,22 +183,19 @@ class SeriesScreen extends StatelessWidget {
                 height: 1.5,
               ),
             ),
-
+          
           const SizedBox(height: 16),
-
-          // Barra de progreso
+          
           _buildProgressBar(progress, collectedStamps, totalStamps),
         ],
       ),
     );
   }
 
-  /// Construye la barra de progreso
   Widget _buildProgressBar(int progress, int collectedStamps, int totalStamps) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Barra visual
         ClipRRect(
           borderRadius: BorderRadius.circular(6),
           child: LinearProgressIndicator(
@@ -257,10 +207,7 @@ class SeriesScreen extends StatelessWidget {
             minHeight: 8,
           ),
         ),
-
         const SizedBox(height: 8),
-
-        // Texto de progreso
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -293,7 +240,6 @@ class SeriesScreen extends StatelessWidget {
     );
   }
 
-  /// Construye separador decorativo
   Widget _buildDivider() {
     return Container(
       height: 1,
@@ -301,7 +247,7 @@ class SeriesScreen extends StatelessWidget {
         gradient: LinearGradient(
           colors: [
             Colors.transparent,
-            const Color(0xFFD4AF37).withOpacity(0.5),
+            const Color(0xFFD4AF37).withValues(alpha: 0.5),
             Colors.transparent,
           ],
         ),
@@ -309,7 +255,6 @@ class SeriesScreen extends StatelessWidget {
     );
   }
 
-  /// Construye el grid de sellos
   Widget _buildStampsGrid(
     Series series,
     AlbumProvider provider,
@@ -330,12 +275,13 @@ class SeriesScreen extends StatelessWidget {
       itemCount: series.stamps.length,
       itemBuilder: (context, index) {
         final stamp = series.stamps[index];
-        return StampCard(stamp: stamp);
+        return StampCard(
+          stamp: stamp,
+        );
       },
     );
   }
 
-  /// Construye estado vacío (sin sellos)
   Widget _buildEmptyStampsState() {
     return Center(
       child: Padding(
@@ -343,7 +289,11 @@ class SeriesScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.local_post_office, size: 80, color: Colors.grey[400]),
+            Icon(
+              Icons.local_post_office,
+              size: 80,
+              color: Colors.grey[400],
+            ),
             const SizedBox(height: 20),
             Text(
               'Próximamente',
@@ -368,7 +318,6 @@ class SeriesScreen extends StatelessWidget {
     );
   }
 
-  /// Muestra dialog de completado
   void _showCompletionDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -431,14 +380,13 @@ class SeriesScreen extends StatelessWidget {
     );
   }
 
-  /// Obtiene el color según el progreso
   Color _getProgressColor(int progress) {
     if (progress == 100) {
-      return const Color(0xFF4CAF50); // Verde
+      return const Color(0xFF4CAF50);
     } else if (progress >= 50) {
-      return const Color(0xFFD4AF37); // Dorado
+      return const Color(0xFFD4AF37);
     } else {
-      return const Color(0xFF8B7355); // Bronce
+      return const Color(0xFF8B7355);
     }
   }
 }

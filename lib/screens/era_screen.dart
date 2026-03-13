@@ -9,24 +9,13 @@ import '../models/series.dart';
 import 'series_screen.dart';
 
 /// Pantalla de detalle de una época histórica.
-/// 
-/// Muestra:
-/// - Información histórica de la época
-/// - Progreso de colección (sellos conseguidos / totales)
-/// - Lista de series dentro de esta época
-/// - Navegación a cada serie para ver sus sellos
 class EraScreen extends StatelessWidget {
-  /// ID de la época a mostrar
   final String eraId;
 
-  const EraScreen({
-    super.key,
-    required this.eraId,
-  });
+  const EraScreen({super.key, required this.eraId});
 
   @override
   Widget build(BuildContext context) {
-    // Obtener la época desde la base de datos
     final Era era;
     try {
       era = StampDatabase.getEraById(eraId);
@@ -36,9 +25,10 @@ class EraScreen extends StatelessWidget {
 
     return Consumer<AlbumProvider>(
       builder: (context, albumProvider, child) {
-        // Calcular progreso de esta época
         final progress = albumProvider.getProgressPercentage(eraId);
-        final collectedStamps = era.countCollectedStamps(albumProvider.collectedStampIds);
+        final collectedStamps = era.countCollectedStamps(
+          albumProvider.collectedStampIds,
+        );
         final totalStamps = era.totalStamps;
         final isComplete = progress == 100 && totalStamps > 0;
 
@@ -47,34 +37,23 @@ class EraScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ═══════════════════════════════════════════════════════════════
-              // CABECERA DE LA ÉPOCA
-              // ═══════════════════════════════════════════════════════════════
-              _buildEraHeader(era, progress, collectedStamps, totalStamps, isComplete),
-              
+              _buildEraHeader(
+                era,
+                progress,
+                collectedStamps,
+                totalStamps,
+                isComplete,
+              ),
               const SizedBox(height: 24),
-              
-              // ═══════════════════════════════════════════════════════════════
-              // SEPARADOR DECORATIVO
-              // ═══════════════════════════════════════════════════════════════
               _buildDivider(),
-              
               const SizedBox(height: 24),
-              
-              // ═══════════════════════════════════════════════════════════════
-              // TÍTULO DE SERIES
-              // ═══════════════════════════════════════════════════════════════
               _buildSeriesTitle(era.series.length),
-              
               const SizedBox(height: 16),
-              
-              // ═══════════════════════════════════════════════════════════════
-              // LISTA DE SERIES
-              // ═══════════════════════════════════════════════════════════════
+
               if (era.series.isEmpty)
                 _buildEmptySeriesState()
               else
-                _buildSeriesList(context, era, albumProvider),
+                _buildSeriesColumn(context, era, albumProvider),
             ],
           ),
         );
@@ -82,7 +61,6 @@ class EraScreen extends StatelessWidget {
     );
   }
 
-  /// Construye la cabecera con información de la época
   Widget _buildEraHeader(
     Era era,
     int progress,
@@ -107,7 +85,7 @@ class EraScreen extends StatelessWidget {
         border: Border.all(color: const Color(0xFF8B6914), width: 3),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -115,7 +93,6 @@ class EraScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Icono de completado (si aplica)
           if (isComplete) ...[
             Container(
               padding: const EdgeInsets.all(12),
@@ -131,8 +108,6 @@ class EraScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
           ],
-          
-          // Título de la época
           Text(
             era.title,
             style: GoogleFonts.cinzel(
@@ -143,10 +118,7 @@ class EraScreen extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          
           const SizedBox(height: 8),
-          
-          // Subtítulo
           Text(
             era.subtitle,
             style: GoogleFonts.cormorantGaramond(
@@ -156,14 +128,11 @@ class EraScreen extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          
           const SizedBox(height: 12),
-          
-          // Período de años
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFF2C1810).withOpacity(0.2),
+              color: const Color(0xFF2C1810).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -175,10 +144,7 @@ class EraScreen extends StatelessWidget {
               ),
             ),
           ),
-          
           const SizedBox(height: 20),
-          
-          // Descripción histórica
           Text(
             era.description,
             style: GoogleFonts.cormorantGaramond(
@@ -188,36 +154,28 @@ class EraScreen extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          
           const SizedBox(height: 24),
-          
-          // Barra de progreso
           _buildProgressBar(progress, collectedStamps, totalStamps),
         ],
       ),
     );
   }
 
-  /// Construye la barra de progreso de la época
   Widget _buildProgressBar(int progress, int collectedStamps, int totalStamps) {
     return Column(
       children: [
-        // Barra visual
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: LinearProgressIndicator(
             value: totalStamps > 0 ? progress / 100 : 0,
-            backgroundColor: Colors.white.withOpacity(0.3),
+            backgroundColor: Colors.white.withValues(alpha: 0.3),
             valueColor: AlwaysStoppedAnimation<Color>(
               _getProgressColor(progress),
             ),
             minHeight: 10,
           ),
         ),
-        
         const SizedBox(height: 12),
-        
-        // Texto de progreso
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -250,7 +208,6 @@ class EraScreen extends StatelessWidget {
     );
   }
 
-  /// Construye separador decorativo
   Widget _buildDivider() {
     return Row(
       children: [
@@ -261,7 +218,7 @@ class EraScreen extends StatelessWidget {
               gradient: LinearGradient(
                 colors: [
                   Colors.transparent,
-                  const Color(0xFFD4AF37).withOpacity(0.5),
+                  const Color(0xFFD4AF37).withValues(alpha: 0.5),
                   Colors.transparent,
                 ],
               ),
@@ -272,7 +229,7 @@ class EraScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Icon(
             Icons.auto_stories,
-            color: const Color(0xFFD4AF37).withOpacity(0.5),
+            color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
             size: 20,
           ),
         ),
@@ -283,7 +240,7 @@ class EraScreen extends StatelessWidget {
               gradient: LinearGradient(
                 colors: [
                   Colors.transparent,
-                  const Color(0xFFD4AF37).withOpacity(0.5),
+                  const Color(0xFFD4AF37).withValues(alpha: 0.5),
                   Colors.transparent,
                 ],
               ),
@@ -294,15 +251,10 @@ class EraScreen extends StatelessWidget {
     );
   }
 
-  /// Construye el título de la sección de series
   Widget _buildSeriesTitle(int seriesCount) {
     return Row(
       children: [
-        Icon(
-          Icons.folder_open,
-          color: const Color(0xFF8B4513),
-          size: 24,
-        ),
+        Icon(Icons.folder_open, color: const Color(0xFF8B4513), size: 24),
         const SizedBox(width: 12),
         Text(
           'Series de esta época',
@@ -332,47 +284,44 @@ class EraScreen extends StatelessWidget {
     );
   }
 
-  /// Construye la lista de series
-  Widget _buildSeriesList(
+  Widget _buildSeriesColumn(
     BuildContext context,
     Era era,
     AlbumProvider provider,
   ) {
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: era.series.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final series = era.series[index];
-        return _buildSeriesCard(context, series, provider);
-      },
+    return Column(
+      children: era.series.map((series) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: _buildSeriesCard(context, series, provider),
+        );
+      }).toList(),
     );
   }
 
-  /// Construye una tarjeta individual de serie
   Widget _buildSeriesCard(
     BuildContext context,
     Series series,
     AlbumProvider provider,
   ) {
     final totalStamps = series.stamps.length;
-    final collectedStamps = series.countCollectedStamps(provider.collectedStampIds);
+    final collectedStamps = series.countCollectedStamps(
+      provider.collectedStampIds,
+    );
     final progress = series.getProgressPercentage(provider.collectedStampIds);
     final isComplete = progress == 100 && totalStamps > 0;
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SeriesScreen(series: series),
-            ),
-          );
-        },
-        borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        print('✅ CLICK en serie: ${series.name}');
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SeriesScreen(series: series)),
+        );
+      },
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -386,7 +335,7 @@ class EraScreen extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 6,
                 offset: const Offset(0, 3),
               ),
@@ -394,33 +343,26 @@ class EraScreen extends StatelessWidget {
           ),
           child: Row(
             children: [
-              // Icono de estado
               Container(
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
                   color: isComplete
                       ? const Color(0xFF4CAF50)
-                      : const Color(0xFFD4AF37).withOpacity(0.2),
+                      : const Color(0xFFD4AF37).withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   isComplete ? Icons.check_circle : Icons.folder,
-                  color: isComplete
-                      ? Colors.white
-                      : const Color(0xFFD4AF37),
+                  color: isComplete ? Colors.white : const Color(0xFFD4AF37),
                   size: 28,
                 ),
               ),
-              
               const SizedBox(width: 16),
-              
-              // Información de la serie
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Nombre de la serie
                     Text(
                       series.name,
                       style: GoogleFonts.cormorantGaramond(
@@ -431,10 +373,7 @@ class EraScreen extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    
                     const SizedBox(height: 4),
-                    
-                    // Período de la serie
                     Text(
                       '${series.startYear} - ${series.endYear}',
                       style: GoogleFonts.cormorantGaramond(
@@ -442,25 +381,21 @@ class EraScreen extends StatelessWidget {
                         color: Colors.brown[600],
                       ),
                     ),
-                    
                     const SizedBox(height: 8),
-                    
-                    // Barra de progreso mini
                     ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
                         value: totalStamps > 0 ? progress / 100 : 0,
                         backgroundColor: Colors.grey[300],
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          _getProgressColor(progress),
+                          isComplete
+                              ? const Color(0xFF4CAF50)
+                              : const Color(0xFFD4AF37),
                         ),
                         minHeight: 6,
                       ),
                     ),
-                    
                     const SizedBox(height: 4),
-                    
-                    // Texto de progreso
                     Text(
                       '$collectedStamps / $totalStamps sellos ($progress%)',
                       style: GoogleFonts.cormorantGaramond(
@@ -471,13 +406,7 @@ class EraScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              
-              // Flecha de navegación
-              Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.brown[400],
-                size: 18,
-              ),
+              Icon(Icons.arrow_forward_ios, color: Colors.brown[400], size: 18),
             ],
           ),
         ),
@@ -485,7 +414,6 @@ class EraScreen extends StatelessWidget {
     );
   }
 
-  /// Construye estado vacío (sin series)
   Widget _buildEmptySeriesState() {
     return Container(
       width: double.infinity,
@@ -497,11 +425,7 @@ class EraScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.folder_off,
-            size: 60,
-            color: Colors.grey[500],
-          ),
+          Icon(Icons.folder_off, size: 60, color: Colors.grey[500]),
           const SizedBox(height: 16),
           Text(
             'Próximamente',
@@ -525,7 +449,6 @@ class EraScreen extends StatelessWidget {
     );
   }
 
-  /// Construye estado de error
   Widget _buildErrorState(String message) {
     return Center(
       child: Padding(
@@ -533,11 +456,7 @@ class EraScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 60,
-              color: Colors.red[400],
-            ),
+            Icon(Icons.error_outline, size: 60, color: Colors.red[400]),
             const SizedBox(height: 16),
             Text(
               'Error',
@@ -562,14 +481,13 @@ class EraScreen extends StatelessWidget {
     );
   }
 
-  /// Obtiene el color según el progreso
   Color _getProgressColor(int progress) {
     if (progress == 100) {
-      return const Color(0xFF4CAF50); // Verde
+      return const Color(0xFF4CAF50);
     } else if (progress >= 50) {
-      return const Color(0xFFD4AF37); // Dorado
+      return const Color(0xFFD4AF37);
     } else {
-      return const Color(0xFF8B7355); // Bronce
+      return const Color(0xFF8B7355);
     }
   }
 }

@@ -1,4 +1,3 @@
-// lib/models/stamp.dart
 import 'stamp_rarity.dart';
 
 class Stamp {
@@ -8,7 +7,7 @@ class Stamp {
   final double valuePesetas;
   final int year;
   final String description;
-  final String imageBase64; // ← Cambiado de imagePath a imageBase64
+  final String imageBase64;
   final StampRarity rarity;
 
   Stamp({
@@ -19,28 +18,40 @@ class Stamp {
     required this.year,
     required this.description,
     required this.imageBase64,
-    this.rarity = StampRarity.comun,
+    required this.rarity,
   });
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'seriesId': seriesId,
-        'name': name,
-        'value': valuePesetas,
-        'year': year,
-        'description': description,
-        'imageBase64': imageBase64,
-        'rarity': rarity.toJson(),
-      };
+    'id': id,
+    'seriesId': seriesId,
+    'name': name,
+    'valuePesetas': valuePesetas,
+    'year': year,
+    'description': description,
+    'imageBase64': imageBase64,
+    'rarity': rarity.toJson(),
+  };
 
+  /// ✅ CORREGIDO: Usa la función stampRarityFromString (nivel superior)
   factory Stamp.fromJson(Map<String, dynamic> json) => Stamp(
-        id: json['id'],
-        seriesId: json['seriesId'],
-        name: json['name'],
-        valuePesetas: json['value'],
-        year: json['year'],
-        description: json['description'],
-        imageBase64: json['imageBase64'] ?? '',
-        rarity: stampRarityFromString(json['rarity'] ?? 'Común'),
-      );
+    id: json['id'] as String,
+    seriesId: json['seriesId'] as String,
+    name: json['name'] as String,
+    valuePesetas: (json['valuePesetas'] as num).toDouble(),
+    year: json['year'] as int,
+    description: json['description'] as String,
+    imageBase64: json['imageBase64'] as String,
+    rarity: stampRarityFromString(json['rarity'] as String),
+  );
+
+  @override
+  String toString() => 'Stamp{id: $id, name: $name, rarity: $rarity}';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Stamp && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }

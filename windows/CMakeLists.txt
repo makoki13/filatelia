@@ -6,6 +6,10 @@ project(filatelia LANGUAGES CXX)
 # the on-disk name of your application.
 set(BINARY_NAME "filatelia")
 
+# En la sección de configuración de la ventana
+set(WINDOW_NAME "Álbum de Sellos Españoles")
+set(WINDOW_TITLE "Álbum de Sellos Españoles")
+
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
 cmake_policy(VERSION 3.14...3.25)

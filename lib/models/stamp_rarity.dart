@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Niveles de rareza de los sellos coleccionables.
 enum StampRarity {
   comun,
   pocoComun,
@@ -7,56 +8,18 @@ enum StampRarity {
   muyRaro,
 }
 
+/// Extensión para añadir propiedades y métodos al enum StampRarity
 extension StampRarityExtension on StampRarity {
-  String get name {
-    switch (this) {
-      case StampRarity.comun:
-        return 'Común';
-      case StampRarity.pocoComun:
-        return 'Poco Común';
-      case StampRarity.raro:
-        return 'Raro';
-      case StampRarity.muyRaro:
-        return 'Muy Raro';
-    }
-  }
-
-  String get code {
-    switch (this) {
-      case StampRarity.comun:
-        return 'C';
-      case StampRarity.pocoComun:
-        return 'PC';
-      case StampRarity.raro:
-        return 'R';
-      case StampRarity.muyRaro:
-        return 'MR';
-    }
-  }
-
   Color get color {
     switch (this) {
       case StampRarity.comun:
         return const Color(0xFF8B7355);
       case StampRarity.pocoComun:
-        return const Color(0xFFC0C0C0);
-      case StampRarity.raro:
         return const Color(0xFFD4AF37);
-      case StampRarity.muyRaro:
-        return const Color(0xFFE74C3C);
-    }
-  }
-
-  Color get backgroundColor {
-    switch (this) {
-      case StampRarity.comun:
-        return const Color(0xFF8B7355).withOpacity(0.2);
-      case StampRarity.pocoComun:
-        return const Color(0xFFC0C0C0).withOpacity(0.2);
       case StampRarity.raro:
-        return const Color(0xFFD4AF37).withOpacity(0.2);
+        return const Color(0xFFC0C0C0);
       case StampRarity.muyRaro:
-        return const Color(0xFFE74C3C).withOpacity(0.2);
+        return const Color(0xFFE5E4E2);
     }
   }
 
@@ -73,20 +36,85 @@ extension StampRarityExtension on StampRarity {
     }
   }
 
-  // Para guardar en JSON
+  String get code {
+    switch (this) {
+      case StampRarity.comun:
+        return 'C';
+      case StampRarity.pocoComun:
+        return 'PC';
+      case StampRarity.raro:
+        return 'R';
+      case StampRarity.muyRaro:
+        return 'MR';
+    }
+  }
+
+  Color get backgroundColor {
+    switch (this) {
+      case StampRarity.comun:
+        return const Color(0xFF8B7355).withValues(alpha: 0.2);
+      case StampRarity.pocoComun:
+        return const Color(0xFFD4AF37).withValues(alpha: 0.2);
+      case StampRarity.raro:
+        return const Color(0xFFC0C0C0).withValues(alpha: 0.2);
+      case StampRarity.muyRaro:
+        return const Color(0xFFE5E4E2).withValues(alpha: 0.2);
+    }
+  }
+
+  double get probability {
+    switch (this) {
+      case StampRarity.comun:
+        return 0.60;
+      case StampRarity.pocoComun:
+        return 0.25;
+      case StampRarity.raro:
+        return 0.12;
+      case StampRarity.muyRaro:
+        return 0.03;
+    }
+  }
+
+  String get displayName {
+    switch (this) {
+      case StampRarity.comun:
+        return 'Común';
+      case StampRarity.pocoComun:
+        return 'Poco Común';
+      case StampRarity.raro:
+        return 'Raro';
+      case StampRarity.muyRaro:
+        return 'Muy Raro';
+    }
+  }
+
+  int get valueMultiplier {
+    switch (this) {
+      case StampRarity.comun:
+        return 1;
+      case StampRarity.pocoComun:
+        return 3;
+      case StampRarity.raro:
+        return 10;
+      case StampRarity.muyRaro:
+        return 50;
+    }
+  }
+
   String toJson() => name;
 }
 
-// ✅ Función helper externa para convertir desde JSON
+/// ✅ MÉTODO ESTÁTICO FUERA DE LA EXTENSIÓN (nivel superior)
+/// Convierte un String a StampRarity (para cargar desde JSON)
 StampRarity stampRarityFromString(String value) {
   switch (value) {
-    case 'Común':
+    case 'comun':
       return StampRarity.comun;
-    case 'Poco Común':
+    case 'pocoComun':
       return StampRarity.pocoComun;
-    case 'Raro':
+    case 'raro':
       return StampRarity.raro;
-    case 'Muy Raro':
+    case 'muyRaro':
       return StampRarity.muyRaro;
     default:
       return StampRarity.comun;

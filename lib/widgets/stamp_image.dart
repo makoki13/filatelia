@@ -1,20 +1,25 @@
-// lib/widgets/stamp_image.dart
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
+/// Widget para mostrar la imagen de un sello.
+///
+/// Maneja dos estados:
+/// - Sello coleccionado: Muestra la imagen Base64
+/// - Sello no coleccionado: Muestra un placeholder gris
 class StampImage extends StatelessWidget {
   final String base64Data;
   final bool isCollected;
   final double width;
   final double height;
 
+  /// ✅ CORREGIDO: Usar super.key en lugar de this.key
   const StampImage({
-    Key? key,
+    super.key, // ✅ Sintaxis moderna Dart 2.17+
     required this.base64Data,
     required this.isCollected,
     this.width = 100,
     this.height = 120,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +49,7 @@ class StampImage extends StatelessWidget {
 
   Widget _buildPlaceholder() {
     return Center(
-      child: Icon(
-        Icons.help_outline,
-        size: 40,
-        color: Colors.grey[400],
-      ),
+      child: Icon(Icons.local_post_office, size: 40, color: Colors.grey[400]),
     );
   }
 }
