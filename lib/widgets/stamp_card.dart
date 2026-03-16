@@ -1,4 +1,3 @@
-// lib/widgets/stamp_card.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +7,12 @@ import '../models/stamp_rarity.dart';
 import '../providers/album_provider.dart';
 import 'stamp_image.dart';
 
+/// Tarjeta individual de sello coleccionable.
+///
+/// Muestra:
+/// - Indicador de rareza (parte superior)
+/// - Imagen del sello (centro)
+/// - Nombre y descripción (pie de página - 2 filas)
 class StampCard extends StatelessWidget {
   final Stamp stamp;
 
@@ -20,20 +25,20 @@ class StampCard extends StatelessWidget {
         final isCollected = albumProvider.isStampCollected(stamp.id);
 
         return Container(
-          margin: const EdgeInsets.all(8),
+          margin: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: isCollected ? Colors.white : Colors.grey[200],
-            borderRadius: BorderRadius.circular(10),
+            color: isCollected ? Colors.white : const Color(0xFFE8E8E8),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: isCollected ? stamp.rarity.color : Colors.grey[400]!,
+              color: isCollected ? stamp.rarity.color : const Color(0xFFB0B0B0),
               width: isCollected ? 2 : 1,
             ),
             boxShadow: isCollected
                 ? [
                     BoxShadow(
                       color: stamp.rarity.backgroundColor,
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
                     ),
                   ]
                 : null,
@@ -44,12 +49,12 @@ class StampCard extends StatelessWidget {
               // INDICADOR DE RAREZA (Parte superior)
               // ═══════════════════════════════════════════════════════════════
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
                   color: stamp.rarity.backgroundColor,
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                    topRight: Radius.circular(8),
+                    topLeft: Radius.circular(6),
+                    topRight: Radius.circular(6),
                   ),
                 ),
                 child: Row(
@@ -57,14 +62,14 @@ class StampCard extends StatelessWidget {
                   children: [
                     Icon(
                       stamp.rarity.icon,
-                      size: 12,
+                      size: 10,
                       color: stamp.rarity.color,
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 2),
                     Text(
                       stamp.rarity.code,
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 8,
                         fontWeight: FontWeight.bold,
                         color: stamp.rarity.color,
                       ),
@@ -87,12 +92,12 @@ class StampCard extends StatelessWidget {
               ),
 
               // ═══════════════════════════════════════════════════════════════
-              // PIE DE PÁGINA (2 filas: Name + Value)
+              // PIE DE PÁGINA (2 filas: Name + Description)
               // ═══════════════════════════════════════════════════════════════
               Expanded(
                 flex: 2,
                 child: Container(
-                  padding: const EdgeInsets.all(6),
+                  padding: const EdgeInsets.all(4),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -100,29 +105,33 @@ class StampCard extends StatelessWidget {
                       Text(
                         stamp.name,
                         style: GoogleFonts.cormorantGaramond(
-                          fontSize: 12,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: isCollected
-                              ? Colors.black87
-                              : Colors.grey[600],
+                              ? const Color(0xFF2C1810)
+                              : const Color(0xFF888888),
                         ),
                         textAlign: TextAlign.center,
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
 
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
 
-                      // ✅ FILA 2: Valor en pesetas
+                      // ✅ FILA 2: Descripción del sello (CAMBIO SOLICITADO)
                       Text(
-                        '${stamp.valuePesetas} Ptas',
+                        stamp.description,
                         style: GoogleFonts.cormorantGaramond(
-                          fontSize: 11,
+                          fontSize: 12, // ✅ Fuente más pequeña para descripción
                           color: isCollected
                               ? const Color(0xFF8B4513)
-                              : Colors.grey[500],
-                          fontWeight: FontWeight.w600,
+                              : const Color(0xFFAAAAAA),
+                          fontStyle:
+                              FontStyle.italic, // ✅ Cursiva para descripción
                         ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2, // ✅ Máximo 2 líneas para descripción
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),

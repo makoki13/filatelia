@@ -14,11 +14,13 @@ class SeriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('🎴 SERIES SCREEN BUILD - serie: ${series.name}');
-    
+
     return Consumer<AlbumProvider>(
       builder: (context, albumProvider, child) {
         final totalStamps = series.stamps.length;
-        final progress = series.getProgressPercentage(albumProvider.collectedStampIds);
+        final progress = series.getProgressPercentage(
+          albumProvider.collectedStampIds,
+        );
         final isComplete = progress == 100 && totalStamps > 0;
 
         final isMobile = MediaQuery.of(context).size.width < 800;
@@ -44,7 +46,10 @@ class SeriesScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 16.0),
                   child: Center(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: isComplete
                             ? const Color(0xFF4CAF50)
@@ -81,7 +86,11 @@ class SeriesScreen extends StatelessWidget {
                 _buildSeriesInfo(series, progress, totalStamps, isComplete),
                 _buildDivider(),
                 Expanded(
-                  child: _buildStampsGrid(series, albumProvider, crossAxisCount),
+                  child: _buildStampsGrid(
+                    series,
+                    albumProvider,
+                    crossAxisCount,
+                  ),
                 ),
               ],
             ),
@@ -254,13 +263,15 @@ class SeriesScreen extends StatelessWidget {
       return _buildEmptyStampsState();
     }
 
-    return GridView.builder(
+    return // En el método _buildStampsGrid():
+    GridView.builder(
       padding: const EdgeInsets.all(16),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
-        childAspectRatio: 0.75,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
+        // ✅ CAMBIO CLAVE: Aspect ratio aumentado para cards más bajas
+        childAspectRatio: 1.2, // Antes: 0.75 (más alto) | Ahora: 1.2 (más bajo)
+        crossAxisSpacing: 8, // ✅ Espaciado reducido
+        mainAxisSpacing: 8, // ✅ Espaciado reducido
       ),
       itemCount: series.stamps.length,
       itemBuilder: (context, index) {
