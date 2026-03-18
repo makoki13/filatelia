@@ -269,7 +269,7 @@ class SeriesScreen extends StatelessWidget {
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
         // ✅ CAMBIO CLAVE: Aspect ratio aumentado para cards más bajas
-        childAspectRatio: 1.2, // Antes: 0.75 (más alto) | Ahora: 1.2 (más bajo)
+        childAspectRatio: 1.1, // Antes: 0.75 (más alto) | Ahora: 1.2 (más bajo)
         crossAxisSpacing: 8, // ✅ Espaciado reducido
         mainAxisSpacing: 8, // ✅ Espaciado reducido
       ),

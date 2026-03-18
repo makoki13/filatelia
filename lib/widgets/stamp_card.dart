@@ -49,7 +49,7 @@ class StampCard extends StatelessWidget {
               // INDICADOR DE RAREZA (Parte superior)
               // ═══════════════════════════════════════════════════════════════
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                 decoration: BoxDecoration(
                   color: stamp.rarity.backgroundColor,
                   borderRadius: const BorderRadius.only(
@@ -69,7 +69,7 @@ class StampCard extends StatelessWidget {
                     Text(
                       stamp.rarity.code,
                       style: TextStyle(
-                        fontSize: 8,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: stamp.rarity.color,
                       ),
@@ -82,7 +82,7 @@ class StampCard extends StatelessWidget {
               // IMAGEN DEL SELLO (Centro)
               // ═══════════════════════════════════════════════════════════════
               Expanded(
-                flex: 3,
+                flex: 10,
                 child: StampImage(
                   base64Data: stamp.imageBase64,
                   isCollected: isCollected,
@@ -95,7 +95,7 @@ class StampCard extends StatelessWidget {
               // PIE DE PÁGINA (2 filas: Name + Description)
               // ═══════════════════════════════════════════════════════════════
               Expanded(
-                flex: 2,
+                flex: 3,
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   child: Column(
